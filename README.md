@@ -5,6 +5,9 @@ This project uses a simple Node.js mock application that imitates a Point-of-Sal
 The main goal of this project is to demonstrate the **Second Way of DevOps: Feedback Loops**. It shows how to build a real-time observability pipeline that collects metrics, visualizes them, and automatically sends alerts to a Discord channel when things go wrong.
 
 ## 🏗️ Architecture
+
+![System Architecture](/app/architecture.png)
+
 The environment is built using four Docker containers:
 * **Mock POS App (Node.js):** Generates dummy traffic and exposes telemetry data.
 * **Prometheus:** Pulls the metrics from the app and evaluates math rules (like error rates).
