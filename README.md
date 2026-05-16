@@ -28,7 +28,7 @@ To run this project, you only need to have **Docker** and **Docker Compose** ins
 First, clone the repository to your local machine and navigate into the folder:
 ```bash
 git clone https://github.com/nico-stef/devops-alerting-monitoring-app.git
-cd devops-pos-monitoring
+cd devops-alerting-monitoring-app
 ```
 **Step 2: Configure the Discord Webhook**
 
