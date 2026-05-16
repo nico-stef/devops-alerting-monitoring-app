@@ -1,0 +1,16 @@
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 1m
+  repeat_interval: 1h
+  receiver: 'discord_alert'
+
+receivers:
+  - name: 'discord_alert'
+    discord_configs:
+      - webhook_url: '' # Insert your Discord webhook URL here
+        title: '[{{ .Status | toUpper }}] SRE Alert: {{ .GroupLabels.alertname }}'
+        message: |-
+          **Environment:** POS Traffic Simulator (DevOps Lab)
+          **Incident Details:** A threshold violation has been detected in the Point-of-Sale metrics.
+          **Action Required:** Please review the Grafana dashboards to investigate the system performance.

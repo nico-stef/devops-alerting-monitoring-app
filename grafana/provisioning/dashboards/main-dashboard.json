@@ -1,0 +1,269 @@
+{
+    "editable": true,
+    "panels": [
+        {
+            "title": "BUSINESS OVERVIEW (CUMULATIVE)",
+            "type": "row",
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            }
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "green"
+                    },
+                    "noValue": "0"
+                }
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 12,
+                "x": 0,
+                "y": 1
+            },
+            "id": 10,
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "last"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "sum(shop_orders_total{status=\"success\"}) or vector(0)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Total Successful Orders",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "red"
+                    },
+                    "noValue": "0"
+                }
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 12,
+                "x": 12,
+                "y": 1
+            },
+            "id": 11,
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "last"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "sum(shop_orders_total{status=\"failed\"}) or vector(0)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Total Failed Orders",
+            "type": "stat"
+        },
+        {
+            "title": "REAL-TIME SERVICE HEALTH (MATCHES ALERTS)",
+            "type": "row",
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 5
+            }
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "s",
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 1
+                            }
+                        ]
+                    }
+                }
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 0,
+                "y": 6
+            },
+            "id": 1,
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "last"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "((sum(rate(http_request_latency_seconds_sum[1m])) / sum(rate(http_request_latency_seconds_count[1m]))) >= 0) or vector(0)"
+                }
+            ],
+            "title": "Average Latency (Alert Threshold: 1s)",
+            "type": "gauge"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percentunit",
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 0.15
+                            }
+                        ]
+                    }
+                }
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 12,
+                "y": 6
+            },
+            "id": 12,
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "last"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "((sum(rate(shop_orders_total{status=\"failed\"}[1m])) / sum(rate(shop_orders_total[1m]))) >= 0) or vector(0)"
+                }
+            ],
+            "title": "Order Failure Rate (Alert Threshold: 15%)",
+            "type": "gauge"
+        },
+        {
+            "title": "TRAFFIC ANALYSIS",
+            "type": "row",
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 13
+            }
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "drawStyle": "line",
+                        "fillOpacity": 20
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Status: success"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "options": {
+                                    "fixedColor": "green",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Status: failed"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "options": {
+                                    "fixedColor": "red",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 14
+            },
+            "id": 4,
+            "targets": [
+                {
+                    "expr": "rate(shop_orders_total[1m])",
+                    "legendFormat": "Status: {{status}}"
+                }
+            ],
+            "title": "Order Throughput Trend",
+            "type": "timeseries"
+        }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 37,
+    "style": "dark",
+    "title": "Devops Dashboard",
+    "uid": "pizza-ops-final",
+    "time": {
+        "from": "now-5m",
+        "to": "now"
+    }
+}

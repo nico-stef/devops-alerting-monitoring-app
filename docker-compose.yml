@@ -1,0 +1,72 @@
+services:
+  app:
+    build: ./app
+    ports:
+      - "5000:5000"
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alert.yml:/etc/prometheus/alert.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+  
+  alertmanager:
+    image: prom/alertmanager:latest
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/dashboards/main-dashboard.json:/var/lib/grafana/dashboards/main-dashboard.json
+
+
+
+
+# services:
+#   app:
+#     build: ./app # Construiește o imagine custom folosind codul meu local din folderul ./app (unde caută fișierul Dockerfile). 
+#                  # Practic, "împachetează" aplicația mea unică (index.js) în container, spre deosebire de Prometheus/Grafana 
+#                  # care sunt descărcate gata făcute (imagini).
+#     ports:
+#       - "5000:5000" # Primul 5000 este portul de pe calculator (Host). Al doilea 5000 este portul din interiorul containerului
+
+#   prometheus:
+#     image: prom/prometheus
+#     volumes:
+#       - ./prometheus/:/etc/prometheus/
+#     ports:
+#       - "9090:9090"
+
+#   grafana:
+#     image: grafana/grafana
+#     ports:
+#       - "3000:3000"
+#     environment:
+#       - GF_SECURITY_ADMIN_PASSWORD=admin
+
+
+# # ==============================================================================
+# # ROLUL DOCKER-COMPOSE: Orchestrează pornirea și interconectarea serviciilor/a celor 3 containere din acest proiect.
+# # 1. PORNIRE SIMULTANĂ: Lansează toate cele 3 containere (app, monitorizare, grafice) 
+# #    cu o singură comandă (docker-compose up), în loc de 3 comenzi lungi și separate.
+# # 2. NETWORKING: Creează o rețea virtuală privată (Bridge) pentru aceste containere, ca sa comunice intre ele.
+# # 3. SERVICE DISCOVERY: Include un server DNS intern care mapează numele serviciului
+# #    (ex: "app") la IP-ul său intern.
+# # 4. COMUNICARE: Permite lui Prometheus să găsească aplicația folosind doar numele
+# #    "app" în loc de adrese IP variabile.
+# # 5. IZOLARE: Toate serviciile rulează într-o "bulă" privată, accesibilă din exterior
+# #    doar prin porturile mapate (5000, 9090, 3000).
+# # ==============================================================================

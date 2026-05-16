@@ -1,0 +1,21 @@
+groups:
+  - name: pizza_shop_monitoring_alerts
+    rules:
+
+      - alert: HighCheckoutLatency
+        expr: (sum(rate(http_request_latency_seconds_sum[1m])) / sum(rate(http_request_latency_seconds_count[1m]))) > 1
+        for: 10s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Service Performance Degradation Detected"
+          description: "The average checkout latency has exceeded the 1-second threshold for over 10 seconds. Current value: {{ $value | printf \"%.2f\" }}s."
+
+      - alert: CriticalPaymentFailureRate
+        expr: (sum(rate(shop_orders_total{status="failed"}[1m])) / sum(rate(shop_orders_total[1m]))) > 0.15
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Elevated Transaction Failure Rate"
+          description: "The payment failure rate is currently above 15% of total traffic, indicating a potential issue with the payment gateway integration."
